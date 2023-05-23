@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lazy_camera/home_page.dart';
+import 'package:lazy_camera/_features.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -9,9 +9,10 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: kAppName,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomePage(),
+      home: const HomePage(title: kAppName),
     );
   }
 }

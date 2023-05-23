@@ -1,9 +1,52 @@
-import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:lazy_camera/app.dart';
-import 'package:lazy_camera/main.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart' show Consumer;
+import 'package:lazy_camera/_features.dart';
 
+class HomePage extends StatelessWidget {
+  const HomePage({
+    super.key,
+    required this.title,
+  });
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: Consumer(
+        builder: (context, ref, __) {
+          ref.listen<AppException?>(
+            appExceptionRef,
+            (_, next) {
+              if (next != null) context.notify = AppException.toLabel(next);
+            },
+          );
+
+          return CamerasBuilder(
+            builder: (_, cameraDescriptions) {
+              return Column(
+                children: cameraDescriptions.map((description) {
+                  return Text('''
+            ----
+            ${description.name}
+            ${description.lensDirection}
+            ${description.sensorOrientation}
+           ----
+            ''');
+                }).toList(),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+/*
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -123,3 +166,4 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 }
+*/

@@ -17,6 +17,9 @@
     * [fvm][dependencies_fvm]
 * Linter
     * [flutter_lints][dependencies_flutter_lints]
+* State Managers
+  * [flutter_hooks][dependencies_flutter_hooks]
+  * [hooks_riverpod][dependencies_hooks_riverpod]
 * Camera
   * [camera][dependencies_camera]
 
@@ -36,6 +39,8 @@
 [link_flutter_release]: https://docs.flutter.dev/development/tools/sdk/releases
 [dependencies_fvm]: https://fvm.app/
 [dependencies_flutter_lints]: https://pub.dev/packages/flutter_lints
+[dependencies_flutter_hooks]: https://pub.dev/packages/flutter_hooks
+[dependencies_hooks_riverpod]: https://pub.dev/packages/hooks_riverpod
 [dependencies_camera]: https://pub.dev/packages/camera
 [useful_android_studio]: https://developer.android.com/studio
 [useful_virtual_device]: https://developer.android.com/studio/run/managing-avds.html

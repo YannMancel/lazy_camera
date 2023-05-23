@@ -1,18 +1,17 @@
-import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart'
+    show ProviderObserver, ProviderScope;
 import 'package:lazy_camera/app.dart';
 
-List<CameraDescription> cameras = <CameraDescription>[];
+import '_features.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Fetch the available cameras before initializing the app.
-  try {
-    cameras = await availableCameras();
-  } on CameraException catch (e) {
-    print('====> $e');
-  }
-
-  runApp(const App());
+  runApp(
+    const ProviderScope(
+      observers: kDebugMode ? <ProviderObserver>[AppObserver()] : null,
+      child: App(),
+    ),
+  );
 }
