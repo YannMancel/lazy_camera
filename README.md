@@ -17,6 +17,8 @@
     * [fvm][dependencies_fvm]
 * Linter
     * [flutter_lints][dependencies_flutter_lints]
+* Camera
+  * [camera][dependencies_camera]
 
 ## Troubleshooting
 
@@ -34,6 +36,7 @@
 [link_flutter_release]: https://docs.flutter.dev/development/tools/sdk/releases
 [dependencies_fvm]: https://fvm.app/
 [dependencies_flutter_lints]: https://pub.dev/packages/flutter_lints
+[dependencies_camera]: https://pub.dev/packages/camera
 [useful_android_studio]: https://developer.android.com/studio
 [useful_virtual_device]: https://developer.android.com/studio/run/managing-avds.html
 [useful_developer_options]: https://developer.android.com/studio/debug/dev-options.html#enable

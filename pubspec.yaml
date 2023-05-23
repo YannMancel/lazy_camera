@@ -1,5 +1,5 @@
 name: lazy_camera
-description: A Flutter project to manage camera in lazy way.
+description: A Flutter project to manage the camera in lazy way.
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -9,6 +9,7 @@ environment:
   flutter: ">=3.10.1"
 
 dependencies:
+  camera: ^0.10.5+1
   cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
