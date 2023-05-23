@@ -87,6 +87,17 @@ run: ## Run application by default debug version
 
 ##
 ## ---------------------------------------------------------------
+## Generator
+## ---------------------------------------------------------------
+##
+
+.PHONY: generate-files
+generate-files: ## Generate files with build_runner
+	@$(call print_color_message,"Generate files with build_runner")
+	$(FLUTTER) pub run build_runner build --delete-conflicting-outputs
+
+##
+## ---------------------------------------------------------------
 ## scrcpy
 ## ---------------------------------------------------------------
 ##
