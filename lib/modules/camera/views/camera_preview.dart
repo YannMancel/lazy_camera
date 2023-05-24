@@ -62,11 +62,14 @@ class _CameraPreviewState extends ConsumerState<CameraPreview>
           },
           child: Align(
             alignment: Alignment.bottomCenter,
-            child: FloatingActionButton(
-              onPressed: () {
-                //TODO add callback
-              },
-              child: const Icon(Icons.camera),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: FloatingActionButton(
+                onPressed: () {
+                  //TODO add callback
+                },
+                child: const Icon(Icons.play_arrow_rounded),
+              ),
             ),
           ),
         );

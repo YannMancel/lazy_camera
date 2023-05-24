@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:camera/camera.dart' as camera;
-import 'package:flutter/foundation.dart' show ValueNotifier, kIsWeb;
+import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:hooks_riverpod/hooks_riverpod.dart'
     show Ref, StateController, StateNotifier;
 import 'package:lazy_camera/_features.dart';
@@ -83,7 +83,7 @@ final class CameraLogic extends CameraLogicBase {
   }) {
     return camera.CameraController(
       cameraDescription,
-      kIsWeb ? camera.ResolutionPreset.max : camera.ResolutionPreset.medium,
+      camera.ResolutionPreset.max,
       enableAudio: enableAudio,
     );
   }
