@@ -6,16 +6,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart'
     show Ref, StateController, StateNotifier;
 import 'package:lazy_camera/_features.dart';
 
-abstract base class CameraLogicBase extends StateNotifier<CameraState> {
-  CameraLogicBase(super.state);
-
+abstract interface class CameraLogicInterface
+    implements StateNotifier<CameraState> {
   Future<void> reset();
   ValueNotifier<camera.CameraValue> get controller;
   bool get isInitialized;
   Future<void> onDispose();
 }
 
-final class CameraLogic extends CameraLogicBase {
+final class CameraLogic extends StateNotifier<CameraState>
+    implements CameraLogicInterface {
   CameraLogic(
     Ref ref, {
     CameraState? state,

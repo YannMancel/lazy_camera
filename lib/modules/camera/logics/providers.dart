@@ -7,12 +7,12 @@ import 'package:lazy_camera/_features.dart';
 /// Manages the [CameraState].
 ///
 /// The logic owns the methods following:
-/// - [CameraLogicBase.reset]
-/// - [CameraLogicBase.controller]
-/// - [CameraLogicBase.isInitialized]
-/// - [CameraLogicBase.onDispose]
+/// - [CameraLogicInterface.reset]
+/// - [CameraLogicInterface.controller]
+/// - [CameraLogicInterface.isInitialized]
+/// - [CameraLogicInterface.onDispose]
 final cameraLogicRef =
-    StateNotifierProvider.autoDispose<CameraLogicBase, CameraState>(
+    StateNotifierProvider.autoDispose<CameraLogicInterface, CameraState>(
   (ref) {
     final logic = CameraLogic(ref);
     ref.onDispose(logic.onDispose);
