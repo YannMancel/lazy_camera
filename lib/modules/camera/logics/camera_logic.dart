@@ -4,6 +4,7 @@ import 'package:camera/camera.dart' as camera;
 import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:hooks_riverpod/hooks_riverpod.dart'
     show Ref, StateController, StateNotifier;
+import 'package:image/image.dart' as img;
 import 'package:lazy_camera/_features.dart';
 
 abstract interface class CameraLogicInterface
@@ -87,8 +88,6 @@ final class CameraLogic extends StateNotifier<CameraState>
       cameraDescription,
       camera.ResolutionPreset.max,
       enableAudio: enableAudio,
-      //TODO: check the good format
-      //imageFormatGroup: camera.ImageFormatGroup.jpeg,
     );
   }
 
@@ -114,9 +113,83 @@ final class CameraLogic extends StateNotifier<CameraState>
 
   void _imageListener(camera.CameraImage cameraImage) {
     if (mounted && _controller != null && _isStreamingImages) {
-      //TODO: convert cameraImage to bytes
-      state = const CameraState.imageStream();
+      final imageOrNull = switch (cameraImage.format.group) {
+        camera.ImageFormatGroup.yuv420 => _convertYUV420ToImage(cameraImage),
+        camera.ImageFormatGroup.bgra8888 =>
+          _convertBGRA8888ToImage(cameraImage),
+        _ => null,
+      };
+
+      final bytes = imageOrNull != null ? img.encodeJpg(imageOrNull) : null;
+      state = CameraState.imageStream(bytes: bytes);
     }
+  }
+
+  /// Converts a [camera.CameraImage] in BGRA888 format to [img.Image] in RGB
+  /// format.
+  img.Image _convertBGRA8888ToImage(camera.CameraImage image) {
+    final plane = image.planes.first;
+    return img.Image.fromBytes(
+      width: plane.width!,
+      height: plane.height!,
+      bytes: plane.bytes.buffer,
+      order: img.ChannelOrder.bgra,
+    );
+  }
+
+  /// Converts a [camera.CameraImage] in YUV420 format to [img.Image] in RGB
+  /// format.
+  img.Image _convertYUV420ToImage(camera.CameraImage cameraImage) {
+    final imageWidth = cameraImage.width;
+    final imageHeight = cameraImage.height;
+
+    final yBuffer = cameraImage.planes[0].bytes;
+    final uBuffer = cameraImage.planes[1].bytes;
+    final vBuffer = cameraImage.planes[2].bytes;
+
+    final int yRowStride = cameraImage.planes[0].bytesPerRow;
+    final int yPixelStride = cameraImage.planes[0].bytesPerPixel!;
+
+    final int uvRowStride = cameraImage.planes[1].bytesPerRow;
+    final int uvPixelStride = cameraImage.planes[1].bytesPerPixel!;
+
+    final image = img.Image(width: imageWidth, height: imageHeight);
+
+    for (int h = 0; h < imageHeight; h++) {
+      int uvh = (h / 2).floor();
+
+      for (int w = 0; w < imageWidth; w++) {
+        int uvw = (w / 2).floor();
+
+        final yIndex = (h * yRowStride) + (w * yPixelStride);
+
+        // Y plane should have positive values belonging to [0...255]
+        final int y = yBuffer[yIndex];
+
+        // U/V Values are sub-sampled i.e. each pixel in U/V chanel in a
+        // YUV_420 image act as chroma value for 4 neighbouring pixels
+        final int uvIndex = (uvh * uvRowStride) + (uvw * uvPixelStride);
+
+        // U/V values ideally fall under [-0.5, 0.5] range. To fit them into
+        // [0, 255] range they are scaled up and centered to 128.
+        // Operation below brings U/V values to [-128, 127].
+        final int u = uBuffer[uvIndex];
+        final int v = vBuffer[uvIndex];
+
+        // Compute RGB values per formula above.
+        int r = (y + v * 1436 / 1024 - 179).round();
+        int g = (y - u * 46549 / 131072 + 44 - v * 93604 / 131072 + 91).round();
+        int b = (y + u * 1814 / 1024 - 227).round();
+
+        r = r.clamp(0, 255);
+        g = g.clamp(0, 255);
+        b = b.clamp(0, 255);
+
+        image.setPixelRgb(w, h, r, g, b);
+      }
+    }
+
+    return image;
   }
 
   @override

@@ -26,6 +26,8 @@
   * [freezed_annotation][dependencies_freezed_annotation]
 * Camera
   * [camera][dependencies_camera]
+* Image
+  * [image][dependencies_image]
 
 ## Troubleshooting
 
@@ -49,6 +51,7 @@
 [dependencies_freezed]: https://pub.dev/packages/freezed
 [dependencies_freezed_annotation]: https://pub.dev/packages/freezed_annotation
 [dependencies_camera]: https://pub.dev/packages/camera
+[dependencies_image]: https://pub.dev/packages/image
 [useful_android_studio]: https://developer.android.com/studio
 [useful_virtual_device]: https://developer.android.com/studio/run/managing-avds.html
 [useful_developer_options]: https://developer.android.com/studio/debug/dev-options.html#enable
