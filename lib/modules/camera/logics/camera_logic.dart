@@ -11,6 +11,7 @@ abstract interface class CameraLogicInterface
   Future<void> reset();
   ValueNotifier<camera.CameraValue> get controller;
   bool get isInitialized;
+  Future<void> startImageStream();
   Future<void> onDispose();
 }
 
@@ -25,8 +26,9 @@ final class CameraLogic extends StateNotifier<CameraState>
   }
 
   final Ref _ref;
-  camera.CameraDescription? _firstFrontCamera;
+  camera.CameraDescription? _frontCamera;
   camera.CameraController? _controller;
+  bool _isStreamingImages = false;
 
   StateController<AppException?> get _errorManager {
     return _ref.read(appExceptionRef.notifier);
@@ -38,9 +40,9 @@ final class CameraLogic extends StateNotifier<CameraState>
 
   Future<void> _setup() async {
     final cameras = await _getAvailableCameras();
-    _firstFrontCamera = _getFirstFrontCamera(cameras);
+    _frontCamera = _getFirstFrontCamera(cameras);
 
-    if (_firstFrontCamera == null) return;
+    if (_frontCamera == null) return;
 
     await reset();
   }
@@ -85,6 +87,8 @@ final class CameraLogic extends StateNotifier<CameraState>
       cameraDescription,
       camera.ResolutionPreset.max,
       enableAudio: enableAudio,
+      //TODO: check the good format
+      //imageFormatGroup: camera.ImageFormatGroup.jpeg,
     );
   }
 
@@ -108,19 +112,26 @@ final class CameraLogic extends StateNotifier<CameraState>
     }
   }
 
+  void _imageListener(camera.CameraImage cameraImage) {
+    if (mounted && _controller != null && _isStreamingImages) {
+      //TODO: convert cameraImage to bytes
+      state = const CameraState.imageStream();
+    }
+  }
+
   @override
   Future<void> reset() async {
     state = const CameraState.uninitialized();
     await onDispose();
 
-    if (_firstFrontCamera == null) return;
+    if (_frontCamera == null) return;
 
     _controller = _getCameraController(
-      cameraDescription: _firstFrontCamera!,
+      cameraDescription: _frontCamera!,
     )..addListener(_cameraListener);
 
     await _initialize(_controller!);
-    state = const CameraState.initialized();
+    state = const CameraState.preview();
   }
 
   @override
@@ -132,7 +143,21 @@ final class CameraLogic extends StateNotifier<CameraState>
   bool get isInitialized => _controller?.value.isInitialized ?? false;
 
   @override
+  Future<void> startImageStream() async {
+    if ((_controller?.value.isInitialized ?? false) &&
+        !_controller!.value.isStreamingImages) {
+      _isStreamingImages = true;
+      await _controller!.startImageStream(_imageListener);
+    }
+  }
+
+  @override
   Future<void> onDispose() async {
+    _isStreamingImages = false;
+    if ((_controller?.value.isInitialized ?? false) &&
+        _controller!.value.isStreamingImages) {
+      await _controller?.stopImageStream();
+    }
     _controller?.removeListener(_cameraListener);
     await _controller?.dispose();
     _controller = null;

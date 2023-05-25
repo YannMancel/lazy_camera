@@ -1,7 +1,15 @@
+import 'dart:typed_data' show Uint8List;
+
 import 'package:camera/camera.dart' as camera;
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart' show useListenable;
 import 'package:hooks_riverpod/hooks_riverpod.dart'
-    show Consumer, ConsumerState, ConsumerStatefulWidget;
+    show
+        ConsumerState,
+        ConsumerStatefulWidget,
+        ConsumerWidget,
+        HookConsumerWidget,
+        WidgetRef;
 import 'package:lazy_camera/_features.dart';
 
 class CameraPreview extends ConsumerStatefulWidget with WidgetsBindingObserver {
@@ -47,33 +55,68 @@ class _CameraPreviewState extends ConsumerState<CameraPreview>
       uninitialized: () => const Center(
         child: CircularProgressIndicator.adaptive(),
       ),
-      initialized: () {
-        final cameraController =
-            ref.read(cameraControllerNotifierRef) as camera.CameraController;
+      preview: () => _Preview(
+        notifier: ref.read(cameraLogicRef.notifier).controller,
+      ),
+      imageStream: (bytes) => _ImageStream(bytes: bytes),
+    );
+  }
+}
 
-        return Consumer(
-          builder: (_, ref, child) {
-            ref.watch(cameraControllerNotifierRef);
+class _Preview extends HookConsumerWidget {
+  const _Preview({required this.notifier});
 
-            return camera.CameraPreview(
-              cameraController,
-              child: child,
-            );
-          },
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: FloatingActionButton(
-                onPressed: () {
-                  //TODO add callback
-                },
-                child: const Icon(Icons.play_arrow_rounded),
-              ),
-            ),
+  final ValueNotifier<camera.CameraValue> notifier;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    useListenable(notifier);
+
+    return camera.CameraPreview(
+      notifier as camera.CameraController,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: FloatingActionButton(
+            onPressed: () async {
+              final logic = ref.read(cameraLogicRef.notifier);
+              if (logic.mounted) await logic.startImageStream();
+            },
+            child: const Icon(Icons.play_arrow_rounded),
           ),
-        );
-      },
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageStream extends ConsumerWidget {
+  const _ImageStream({required this.bytes});
+
+  final Uint8List? bytes;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: <Widget>[
+        bytes != null
+            ? Image.memory(bytes!, fit: BoxFit.contain)
+            : const Center(
+                child: Text('No data'),
+              ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: FloatingActionButton(
+            onPressed: () async {
+              final logic = ref.read(cameraLogicRef.notifier);
+              if (logic.mounted) await logic.reset();
+            },
+            child: const Icon(Icons.stop_rounded),
+          ),
+        ),
+      ],
     );
   }
 }

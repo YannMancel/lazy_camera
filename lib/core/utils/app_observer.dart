@@ -76,6 +76,7 @@ class AppObserver extends ProviderObserver {
       message: _eventMessage(
         eventType: EventType.fail,
         provider: provider,
+        value: error,
       ),
     );
   }

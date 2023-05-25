@@ -1,7 +1,5 @@
-import 'package:camera/camera.dart' as camera;
-import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:hooks_riverpod/hooks_riverpod.dart'
-    show ChangeNotifierProvider, StateNotifierProvider, StateProvider;
+    show StateNotifierProvider, StateProvider;
 import 'package:lazy_camera/_features.dart';
 
 /// Manages the [CameraState].
@@ -10,6 +8,7 @@ import 'package:lazy_camera/_features.dart';
 /// - [CameraLogicInterface.reset]
 /// - [CameraLogicInterface.controller]
 /// - [CameraLogicInterface.isInitialized]
+/// - [CameraLogicInterface.startImageStream]
 /// - [CameraLogicInterface.onDispose]
 final cameraLogicRef =
     StateNotifierProvider.autoDispose<CameraLogicInterface, CameraState>(
@@ -26,14 +25,4 @@ final cameraLogicRef =
 final appExceptionRef = StateProvider.autoDispose<AppException?>(
   (_) => null,
   name: 'appExceptionRef',
-);
-
-/// Allows to listen the camera data at each refresh of camera controller.
-final cameraControllerNotifierRef =
-    ChangeNotifierProvider.autoDispose<ValueNotifier<camera.CameraValue>>(
-  (ref) {
-    final logic = ref.watch(cameraLogicRef.notifier);
-    return logic.controller;
-  },
-  name: 'cameraControllerNotifierRef',
 );
