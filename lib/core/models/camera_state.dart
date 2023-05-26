@@ -1,7 +1,13 @@
 import 'dart:typed_data' show Uint8List;
 
 import 'package:freezed_annotation/freezed_annotation.dart'
-    show DeepCollectionEquality, JsonKey, freezed, optionalTypeArgs, useResult;
+    show
+        DeepCollectionEquality,
+        Default,
+        JsonKey,
+        freezed,
+        optionalTypeArgs,
+        useResult;
 
 part 'camera_state.freezed.dart';
 
@@ -9,5 +15,8 @@ part 'camera_state.freezed.dart';
 class CameraState with _$CameraState {
   const factory CameraState.uninitialized() = _Uninitialized;
   const factory CameraState.preview() = _Preview;
-  const factory CameraState.imageStream({Uint8List? bytes}) = _ImageStream;
+  const factory CameraState.imageStream({
+    Uint8List? bytes,
+    @Default(0) int sensorOrientation,
+  }) = _ImageStream;
 }

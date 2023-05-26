@@ -113,6 +113,9 @@ final class CameraLogic extends StateNotifier<CameraState>
 
   void _imageListener(camera.CameraImage cameraImage) {
     if (mounted && _controller != null && _isStreamingImages) {
+      // TODO: pass to isolate to manage images
+      _isStreamingImages = false;
+
       final imageOrNull = switch (cameraImage.format.group) {
         camera.ImageFormatGroup.yuv420 => _convertYUV420ToImage(cameraImage),
         camera.ImageFormatGroup.bgra8888 =>
@@ -121,7 +124,10 @@ final class CameraLogic extends StateNotifier<CameraState>
       };
 
       final bytes = imageOrNull != null ? img.encodeJpg(imageOrNull) : null;
-      state = CameraState.imageStream(bytes: bytes);
+      state = CameraState.imageStream(
+        bytes: bytes,
+        sensorOrientation: _controller!.description.sensorOrientation,
+      );
     }
   }
 

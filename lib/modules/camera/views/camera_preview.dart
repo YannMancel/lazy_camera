@@ -58,7 +58,10 @@ class _CameraPreviewState extends ConsumerState<CameraPreview>
       preview: () => _Preview(
         notifier: ref.read(cameraLogicRef.notifier).controller,
       ),
-      imageStream: (bytes) => _ImageStream(bytes: bytes),
+      imageStream: (bytes, sensorOrientation) => _ImageStream(
+        bytes: bytes,
+        sensorOrientation: sensorOrientation,
+      ),
     );
   }
 }
@@ -92,9 +95,13 @@ class _Preview extends HookConsumerWidget {
 }
 
 class _ImageStream extends ConsumerWidget {
-  const _ImageStream({required this.bytes});
+  const _ImageStream({
+    required this.bytes,
+    required this.sensorOrientation,
+  });
 
   final Uint8List? bytes;
+  final int sensorOrientation;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -102,7 +109,15 @@ class _ImageStream extends ConsumerWidget {
       alignment: Alignment.bottomCenter,
       children: <Widget>[
         bytes != null
-            ? Image.memory(bytes!, fit: BoxFit.contain)
+            ? RotatedBox(
+                quarterTurns: switch (sensorOrientation) {
+                  90 => 1,
+                  180 => 2,
+                  270 => 3,
+                  0 || _ => 0,
+                },
+                child: Image.memory(bytes!, fit: BoxFit.contain),
+              )
             : const Center(
                 child: Text('No data'),
               ),

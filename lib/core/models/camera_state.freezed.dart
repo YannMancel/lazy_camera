@@ -20,21 +20,22 @@ mixin _$CameraState {
   TResult when<TResult extends Object?>({
     required TResult Function() uninitialized,
     required TResult Function() preview,
-    required TResult Function(Uint8List? bytes) imageStream,
+    required TResult Function(Uint8List? bytes, int sensorOrientation)
+        imageStream,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? uninitialized,
     TResult? Function()? preview,
-    TResult? Function(Uint8List? bytes)? imageStream,
+    TResult? Function(Uint8List? bytes, int sensorOrientation)? imageStream,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? uninitialized,
     TResult Function()? preview,
-    TResult Function(Uint8List? bytes)? imageStream,
+    TResult Function(Uint8List? bytes, int sensorOrientation)? imageStream,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -120,7 +121,8 @@ class _$_Uninitialized implements _Uninitialized {
   TResult when<TResult extends Object?>({
     required TResult Function() uninitialized,
     required TResult Function() preview,
-    required TResult Function(Uint8List? bytes) imageStream,
+    required TResult Function(Uint8List? bytes, int sensorOrientation)
+        imageStream,
   }) {
     return uninitialized();
   }
@@ -130,7 +132,7 @@ class _$_Uninitialized implements _Uninitialized {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? uninitialized,
     TResult? Function()? preview,
-    TResult? Function(Uint8List? bytes)? imageStream,
+    TResult? Function(Uint8List? bytes, int sensorOrientation)? imageStream,
   }) {
     return uninitialized?.call();
   }
@@ -140,7 +142,7 @@ class _$_Uninitialized implements _Uninitialized {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? uninitialized,
     TResult Function()? preview,
-    TResult Function(Uint8List? bytes)? imageStream,
+    TResult Function(Uint8List? bytes, int sensorOrientation)? imageStream,
     required TResult orElse(),
   }) {
     if (uninitialized != null) {
@@ -227,7 +229,8 @@ class _$_Preview implements _Preview {
   TResult when<TResult extends Object?>({
     required TResult Function() uninitialized,
     required TResult Function() preview,
-    required TResult Function(Uint8List? bytes) imageStream,
+    required TResult Function(Uint8List? bytes, int sensorOrientation)
+        imageStream,
   }) {
     return preview();
   }
@@ -237,7 +240,7 @@ class _$_Preview implements _Preview {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? uninitialized,
     TResult? Function()? preview,
-    TResult? Function(Uint8List? bytes)? imageStream,
+    TResult? Function(Uint8List? bytes, int sensorOrientation)? imageStream,
   }) {
     return preview?.call();
   }
@@ -247,7 +250,7 @@ class _$_Preview implements _Preview {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? uninitialized,
     TResult Function()? preview,
-    TResult Function(Uint8List? bytes)? imageStream,
+    TResult Function(Uint8List? bytes, int sensorOrientation)? imageStream,
     required TResult orElse(),
   }) {
     if (preview != null) {
@@ -301,7 +304,7 @@ abstract class _$$_ImageStreamCopyWith<$Res> {
           _$_ImageStream value, $Res Function(_$_ImageStream) then) =
       __$$_ImageStreamCopyWithImpl<$Res>;
   @useResult
-  $Res call({Uint8List? bytes});
+  $Res call({Uint8List? bytes, int sensorOrientation});
 }
 
 /// @nodoc
@@ -316,12 +319,17 @@ class __$$_ImageStreamCopyWithImpl<$Res>
   @override
   $Res call({
     Object? bytes = freezed,
+    Object? sensorOrientation = null,
   }) {
     return _then(_$_ImageStream(
       bytes: freezed == bytes
           ? _value.bytes
           : bytes // ignore: cast_nullable_to_non_nullable
               as Uint8List?,
+      sensorOrientation: null == sensorOrientation
+          ? _value.sensorOrientation
+          : sensorOrientation // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -329,14 +337,17 @@ class __$$_ImageStreamCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_ImageStream implements _ImageStream {
-  const _$_ImageStream({this.bytes});
+  const _$_ImageStream({this.bytes, this.sensorOrientation = 0});
 
   @override
   final Uint8List? bytes;
+  @override
+  @JsonKey()
+  final int sensorOrientation;
 
   @override
   String toString() {
-    return 'CameraState.imageStream(bytes: $bytes)';
+    return 'CameraState.imageStream(bytes: $bytes, sensorOrientation: $sensorOrientation)';
   }
 
   @override
@@ -344,12 +355,14 @@ class _$_ImageStream implements _ImageStream {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_ImageStream &&
-            const DeepCollectionEquality().equals(other.bytes, bytes));
+            const DeepCollectionEquality().equals(other.bytes, bytes) &&
+            (identical(other.sensorOrientation, sensorOrientation) ||
+                other.sensorOrientation == sensorOrientation));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(bytes));
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(bytes), sensorOrientation);
 
   @JsonKey(ignore: true)
   @override
@@ -362,9 +375,10 @@ class _$_ImageStream implements _ImageStream {
   TResult when<TResult extends Object?>({
     required TResult Function() uninitialized,
     required TResult Function() preview,
-    required TResult Function(Uint8List? bytes) imageStream,
+    required TResult Function(Uint8List? bytes, int sensorOrientation)
+        imageStream,
   }) {
-    return imageStream(bytes);
+    return imageStream(bytes, sensorOrientation);
   }
 
   @override
@@ -372,9 +386,9 @@ class _$_ImageStream implements _ImageStream {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? uninitialized,
     TResult? Function()? preview,
-    TResult? Function(Uint8List? bytes)? imageStream,
+    TResult? Function(Uint8List? bytes, int sensorOrientation)? imageStream,
   }) {
-    return imageStream?.call(bytes);
+    return imageStream?.call(bytes, sensorOrientation);
   }
 
   @override
@@ -382,11 +396,11 @@ class _$_ImageStream implements _ImageStream {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? uninitialized,
     TResult Function()? preview,
-    TResult Function(Uint8List? bytes)? imageStream,
+    TResult Function(Uint8List? bytes, int sensorOrientation)? imageStream,
     required TResult orElse(),
   }) {
     if (imageStream != null) {
-      return imageStream(bytes);
+      return imageStream(bytes, sensorOrientation);
     }
     return orElse();
   }
@@ -427,9 +441,11 @@ class _$_ImageStream implements _ImageStream {
 }
 
 abstract class _ImageStream implements CameraState {
-  const factory _ImageStream({final Uint8List? bytes}) = _$_ImageStream;
+  const factory _ImageStream(
+      {final Uint8List? bytes, final int sensorOrientation}) = _$_ImageStream;
 
   Uint8List? get bytes;
+  int get sensorOrientation;
   @JsonKey(ignore: true)
   _$$_ImageStreamCopyWith<_$_ImageStream> get copyWith =>
       throw _privateConstructorUsedError;
